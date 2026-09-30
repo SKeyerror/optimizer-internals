@@ -21,8 +21,8 @@
 建议目录约定（按需创建）：
 
 ```
+notes/             # ORCA 源码阅读笔记（按模块，直接放在 notes/ 下，如 dxl.md、architecture.md）
 notes/papers/      # 每篇论文一份笔记（用 paper-note 模板）
-notes/orca/        # ORCA 源码阅读笔记（按模块）
 notes/weekly/      # 每周复盘
 experiments/       # SQL、minidump、脚本、toy 实现
 ```

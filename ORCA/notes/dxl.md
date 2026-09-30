@@ -1,11 +1,11 @@
 # DXL：ORCA 的数据交换格式
 
-> 对应 [ROADMAP.md](../../ROADMAP.md) W9；代码参照 WarehousePG（`/Users/zhenglong/workspace/warehouse-pg`）。
+> 对应 [ROADMAP.md](../ROADMAP.md) W9；代码参照 WarehousePG（`/Users/zhenglong/workspace/warehouse-pg`）。
 
 ## 1. 是什么
 
 **DXL = Data eXchange Language**。一套 ORCA 自定义的 XML 方言，schema 定义在
-[`src/backend/gporca/server/dxl.xsd`](../../../../warehouse-pg/src/backend/gporca/server/dxl.xsd)
+[`src/backend/gporca/server/dxl.xsd`](../../../warehouse-pg/src/backend/gporca/server/dxl.xsd)
 （1747 行，命名空间 `http://greenplum.com/dxl/2010/12/`，595 处 `element`/`complexType` 定义）。
 
 它是 ORCA 与外部世界之间**唯一**的接口协议，一份 DXL 文档最多包含三段内容：
@@ -21,7 +21,7 @@
 </dxl:DXLMessage>
 ```
 
-内存里对应的结构是 [`CDXLNode`](../../../../warehouse-pg/src/backend/gporca/libnaucrates/include/naucrates/dxl/operators/CDXLNode.h)：
+内存里对应的结构是 [`CDXLNode`](../../../warehouse-pg/src/backend/gporca/libnaucrates/include/naucrates/dxl/operators/CDXLNode.h)：
 一棵通用的树/DAG，每个节点持有一个 `CDXLOperator`（说明这是什么算子）和子节点数组。
 
 解析：Xerces-C 的 **SAX2 增量解析器**
@@ -29,7 +29,7 @@
 边扫 XML 边建 `CDXLNode` 树，不先建整棵 DOM。
 
 序列化 / 反序列化的统一入口是
-[`CDXLUtils`](../../../../warehouse-pg/src/backend/gporca/libnaucrates/include/naucrates/dxl/CDXLUtils.h)
+[`CDXLUtils`](../../../warehouse-pg/src/backend/gporca/libnaucrates/include/naucrates/dxl/CDXLUtils.h)
 （源码注释："Entry point for parsing and serializing DXL documents"）。
 
 ## 2. DXL 在系统里的实际作用

@@ -1,7 +1,7 @@
 # ORCA 架构图：模块与代码映射
 
 > 图源：Soliman et al., *Orca: A Modular Query Optimizer Architecture for Big Data*, SIGMOD 2014
-> （对应 [ROADMAP.md](../../ROADMAP.md) W1、W8；后续各模块详细阅读见 W4–W23）。
+> （对应 [ROADMAP.md](../ROADMAP.md) W1、W8；后续各模块详细阅读见 W4–W23）。
 > 代码路径均在 WarehousePG（`/Users/zhenglong/workspace/warehouse-pg/src/backend/gporca`）。
 
 ```
