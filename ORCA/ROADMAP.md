@@ -4,6 +4,14 @@
 每周"必做"约 10~12 P；标 **[选做]** 的留给第 3 个番茄钟，落后时优先砍掉。
 论文详细信息见 [PAPERS.md](PAPERS.md)，代码位置见 [ORCA-CODE-MAP.md](ORCA-CODE-MAP.md)。
 
+每周都适用的约定（方法说明见 [README §3–§5](README.md#3-每日节奏)）：
+
+- **一个主问题**：每周开始时把本周内容压成一个可观察的问题，写进周复盘和 [学习状态](notes/learning-state.md)。
+- **延迟复测**：★★★ 论文和核心模块读完的下一周，周复盘里花 10 min 合上笔记复述一次（计入复盘时间，不另占番茄钟）。
+- **迁移测试**：★★★ 论文笔记必须包含一次"用它解释一个没读过的 xform / minidump"。
+- **阶段基线**：W1、W14、W27、W43 各写一份不看资料的基线，对应的缓冲周重写并对照。
+- **证据门槛**：缓冲周列出的证据没有齐，不进入下一阶段——先缩小范围或补前置，后续选做降级。
+
 ---
 
 ## Phase 0 · 环境与地图（W1–W2）
@@ -13,13 +21,14 @@
 > 你已有 WHPG 构建环境和 PR 经验，这两周只补 ORCA 特有的部分。
 
 ### W1 ORCA 独立构建与单测
+- [ ] ✍️ **阶段基线**（在读任何本周资料之前）：不看资料、不问 Claude，画出你现在理解的"SQL → ORCA → 计划"全流程，标出每一步对应的类，存为 `notes/baseline/W01-pipeline.md`；W13 重写对照 `(0.5P)`
 - [✓] 🔧 在 `src/backend/gporca` 下做 Debug 构建：`cmake -GNinja -D CMAKE_BUILD_TYPE=Debug -D CMAKE_CXX_FLAGS=-Wno-c++20-compat -H. -Bbuild.debug && ninja -C build.debug`，跑 `cd build.debug && ctest -j8`（Debug 构建会打开更多断言）`(2P)`
 - [ ] 🔧 `./server/gporca_test -U CAggTest` 只跑一组；`./server/gporca_test -d ../data/dxl/minidump/<某个>.mdp` 只跑一个 minidump `(1P)`
 - [ ] 💻 通读 gporca 的 `README.md`、`StyleGuide.md`、`README.format.md`；浏览目录并对照 [ORCA-CODE-MAP.md](ORCA-CODE-MAP.md) 标出各库 `(2P)`
 - [ ] 💻 回看自己的 #114、#128 两个翻译层修复：它们在整条链路的哪一步？如果当时问题在 `libgpopt`，会怎么定位？`(1P)`
 - [ ] 📄 Keshav《How to Read a Paper》`(0.5P)`；ORCA 论文（Soliman 2014）第一遍 `(1P)`
 - [ ] 🔧 在集群上加载小规模 TPC-H（SF=1），对同一查询分别 `SET optimizer = off / on` 看 EXPLAIN 差异 `(2P)`
-- [ ] ✍️ `notes/orca/cheatsheet.md`：ORCA 构建 / 单测 / minidump 命令 `(1P)`
+- [ ] ✍️ `notes/cheatsheet.md`：ORCA 构建 / 单测 / minidump 命令 `(1P)`
 
 ### W2 Memo、Trace 与编码约定
 - [ ] 💻 精读 `README.memo.md`，按它的例子在自己的集群上复现一遍，读懂 `Cost Ctxts`、`PRUNED`、`Grp OptCtxts → Best Expr` `(2P)`
@@ -48,7 +57,7 @@
 - [ ] 📄 Chaudhuri 1998 综述（★★★）`(2P)`
 - [ ] 💻 libgpos：`CMemoryPool` / `CAutoMemoryPool`、`CRefCount`、`CDynamicPtrArray`、`CHashMap`、`CBitSet` `(4P)`
 - [ ] 💻 libgpos：异常机制（`GPOS_RAISE`、`GPOS_TRY/CATCH`）、`CTask`/`CWorker`、`CAutoTrace` `(2P)`
-- [ ] ✍️ `notes/orca/libgpos.md`：容器与内存所有权规则（谁 AddRef、谁 Release）`(1P)`
+- [ ] ✍️ `notes/libgpos.md`：容器与内存所有权规则（谁 AddRef、谁 Release）`(1P)`
 - [ ] **[选做]** Ioannidis 1996 综述
 
 ### W5 Volcano 与算子体系
@@ -95,7 +104,7 @@
 - [ ] 🔧 故意改一个代价参数让一批 minidump 失败，用 `scripts/fix_mdps.py --logFile ... --dryRun` 查看、再真正更新；最后 `git checkout` 还原 `(2P)`
 - [ ] 💻 回归测试中 `*_optimizer.out` 与 planner 版本并存的组织方式（你已熟悉回归框架，重点看 ORCA 特有的部分）`(1P)`
 - [ ] 📄 Moerkotte《Building Query Compilers》前两章（建立术语）`(2P)`
-- [ ] ✍️ `notes/orca/testing.md` `(1P)`
+- [ ] ✍️ `notes/testing.md` `(1P)`
 
 ### W12 第一次读懂并改一个 Xform
 - [ ] 💻 完整读 2 个简单 xform：`CXformSelect2Filter`、`CXformGet2TableScan`（pattern、`Exfp` promise、`Transform`）`(3P)`
@@ -107,6 +116,9 @@
 - [ ] ✍️ 定稿"ORCA 端到端流程"长文（带图）
 - [ ] 💻 案例学习：精读 WHPG 近期 4 个 ORCA 核心库修复的 diff 与测试——#149（`CXformGbAggWithMDQA2Join`：CTE producer 列裁剪）、#152（`CColumnFactory`：`PcrCopy` 保留 EUnused）、#154（`CExpressionPreprocessor`：过时断言）、#183（`CUtils`：ordered-set agg 崩溃），以及 a9b9f1aa1df（`CGroupExpression`：统计推导无限递归）；对每个回答"症状是什么 → 根因在哪一层 → 为什么这样改 → 测试怎么写"
 - [ ] 🔧 在 WHPG issue / PR / 邮件列表中收集 5 个候选的核心库问题，作为 W24–W25 的选题池
+- [ ] ✍️ 不看资料重写 W1 的阶段基线（全流程图），和 `notes/baseline/W01-pipeline.md` 并排对照，写下变化最大的三处
+- [ ] 🔧 迁移测试：挑一个没跑过的 minidump，打开 memo trace，不问 Claude，解释 ORCA 为什么选了这个计划
+- [ ] **证据门槛**（齐了才进 Phase 2）：① 重写后的全流程图能标出 DXL → CExpression → Memo → job → 计划提取各步的类；② 至少 3 篇 ★★★ 论文笔记完成了延迟复测；③ 至少 1 个模块做过三次对照（无 AI 基线 → Claude 辅助 → 独立版）
 - [ ] **M1 自测**（不看资料回答）：
   - Volcano 与 Cascades 的核心区别？为什么 Cascades 适合 top-down + 剪枝？
   - ORCA 中 group、group expression、optimization context 三者的关系？
@@ -121,6 +133,7 @@
 目标：规则/变换、Join 枚举、物理属性、MPP 分布、统计与基数、代价模型、预处理。W26 前提交第一个 PR。
 
 ### W14 Xform 框架深入
+- [ ] ✍️ **阶段基线**：不看资料讲清"一个 4 表 join 在 ORCA 里怎样被枚举、选分布、插 Motion、算代价"，存为 `notes/baseline/W14-join.md`；W26 重写对照 `(0.5P)`
 - [ ] 💻 `CXformFactory`、`CXform` 分类（exploration / implementation）、`CPatternLeaf/Tree/MultiLeaf`、`CXformUtils`、xform 的 promise 与去重 `(5P)`
 - [ ] 📄 Ding, Narasayya, Chaudhuri《Extensible Query Optimizers in Practice》：规则与搜索框架相关章节 `(3P)`
 - [ ] 🔧 统计一条 TPC-H Q5 的优化中各 xform 被触发的次数（`optimizer_print_xform` 类 trace）`(2P)`
@@ -189,6 +202,8 @@
 ### W26 🟡 缓冲 + 复盘 + 提交 PR
 - [ ] 🔧 提交 PR，及时回应 review
 - [ ] ✍️ 写 Phase 2 总结
+- [ ] ✍️ 不看资料重写 W14 的阶段基线（4 表 join），和 `notes/baseline/W14-join.md` 对照
+- [ ] **证据门槛**（齐了才进 Phase 3）：① 重写的基线能讲清 join 枚举、分布请求、enforcer 和代价各在哪个类里发生；② 第一个核心库 PR 已提交，PR 描述里的根因分析是自己写的；③ Phase 2 内至少 1 次三次对照
 - [ ] **M2 自测**：
   - DPccp 为什么比 DPsub 高效？DPhyp 怎样处理 outer join 的重排限制？
   - ORCA 的 hash join 会向子节点请求哪几种分布组合？broadcast 何时胜出？
@@ -203,6 +218,7 @@
 目标：子查询、聚合、外连接、CTE、分区、窗口、索引等专题；W39 前合入 ≥ 2 个 PR。
 
 ### W27 子查询 I：经典去嵌套
+- [ ] ✍️ **阶段基线**：不看资料讲清"一个带相关子查询和 `GROUP BY` 的查询在 ORCA 里经过哪些变换"，存为 `notes/baseline/W27-subquery.md`；W39 重写对照 `(0.5P)`
 - [ ] 📄 Kim 1982 `(2P)`；Ganski & Wong 1987（COUNT bug）`(2P)`；Seshadri 1996 `(1P)`
 - [ ] 💻 `CSubqueryHandler` 总览：标量子查询、EXISTS、IN / ANY / ALL 分别如何处理 `(4P)`
 - [ ] ✍️ 笔记：COUNT bug 在 ORCA 中如何被避免 `(1P)`
@@ -263,6 +279,8 @@
 ### W39 🟡 缓冲 + 复盘
 - [ ] 推动第二个 PR 合入
 - [ ] ✍️ 写 Phase 3 总结
+- [ ] ✍️ 不看资料重写 W27 的阶段基线（相关子查询 + GROUP BY），和 `notes/baseline/W27-subquery.md` 对照
+- [ ] **证据门槛**（齐了才进 Phase 4）：① 重写的基线能列出 Apply 引入、去相关、聚合下推的具体 xform；② 核心库 PR 合入 ≥ 2 个；③ 能独立（不问 Claude）在 1 小时内为一个陌生 bug 生成 minidump 并定位到相关模块
 - [ ] **M3 自测**：
   - ORCA 中 Apply 算子的语义？相关子查询从 SQL 到 Join 经历了哪些变换？
   - Eager aggregation 的正确性条件是什么？ORCA 何时把 GbAgg 推到 join 之下？
@@ -293,6 +311,7 @@
 
 ### W43 Capstone 选题与设计
 - [ ] 🔧 从以下来源选题：W29 去相关边界、W22 基数误差、W41 差分测试发现、社区 issue / roadmap
+- [ ] ✍️ **阶段基线**：先不查资料、不问 Claude，用 30 min 写一页设计草稿（问题、方案、风险、测试计划），存为 `notes/baseline/W43-capstone.md`；W52 对照最终合入的方案 `(0.5P)`
 - [ ] 🔧 写设计说明：问题、动机（附 minidump / 查询）、方案、替代方案、影响范围、测试计划 `(6P)`
 - [ ] 🔧 在社区（邮件列表 / issue）征求意见 `(1P)`
 - [ ] 候选方向示例（以社区实际需求为准）：
@@ -321,6 +340,8 @@
 ### W52 🟡 缓冲 + 年度复盘
 - [ ] ✍️ 年度复盘：合入 PR 列表、掌握 / 未掌握的模块、论文清单完成度
 - [ ] ✍️ 制定第二年计划（向 reviewer / committer 方向，或深挖某个方向成为该模块的 owner）
+- [ ] ✍️ 把 W43 的设计草稿和最终合入的方案并排对照：哪些判断是对的，哪些在 review 中被改掉了，为什么
+- [ ] ✍️ 把四份阶段基线和对应的重写版放在一起，写一页"这一年真正改变了什么、仍然反复出错的是什么"
 - [ ] **M4 自测**：
   - 能否为一个新需求独立写出设计说明并估算工作量？
   - 能否 review 他人的 xform / 统计相关 PR 并指出潜在问题？
